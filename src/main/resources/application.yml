@@ -17,8 +17,6 @@ spring:
         format_sql: true
 server:
   ssl:
-    key-alias: todo-https
-    key-store: classpath:local/tim95bell.todo.jks
-    key-store-type: JKS
-    key-store-password: ${TIM95BELL_TODO_SSL_KEY_STORE_PASSWORD}
-    key-password: ${TIM95BELL_TODO_SSL_KEY_PASSWORD}
+    key-store: classpath:local/certificate.p12
+    key-store-type: PKCS12
+    key-store-password: ${TIM95BELL_TODO_SSL_CERTIFICATE_PASSWORD}
