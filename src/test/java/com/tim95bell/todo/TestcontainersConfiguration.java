@@ -9,15 +9,19 @@ import org.testcontainers.utility.DockerImageName;
 
 @TestConfiguration(proxyBeanMethods = false)
 public class TestcontainersConfiguration {
-	String mariaDbImageName;
+    String mariaDbImageName;
 
-	TestcontainersConfiguration(@Value("#{environment.TIM95BELL_MARIADB_VERSION}") String mariaDbVersion) {
-		this.mariaDbImageName = "mariadb:" + mariaDbVersion;
-	}
+    TestcontainersConfiguration(
+        @Value(
+            "#{environment.TIM95BELL_TODO_MARIADB_VERSION}"
+        ) String mariaDbVersion
+    ) {
+        this.mariaDbImageName = "mariadb:" + mariaDbVersion;
+    }
 
-	@Bean
-	@ServiceConnection
-	MariaDBContainer<?> mariaDbContainer() {
-		return new MariaDBContainer<>(DockerImageName.parse(mariaDbImageName));
-	}
+    @Bean
+    @ServiceConnection
+    MariaDBContainer<?> mariaDbContainer() {
+        return new MariaDBContainer<>(DockerImageName.parse(mariaDbImageName));
+    }
 }
