@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 @SpringBootApplication
 @EnableJpaAuditing
 public class TodoApplication {
-
 	public static void main(String[] args) {
 		ApplicationContext context = SpringApplication.run(TodoApplication.class, args);
 		TodoService todoService = context.getBean(TodoService.class);
@@ -22,5 +21,4 @@ public class TodoApplication {
 		Stream<Todo> todos = todoService.findAll();
 		assert(todos.count() == 100);
 	}
-
 }
