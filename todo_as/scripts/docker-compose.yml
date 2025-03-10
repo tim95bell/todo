@@ -1,0 +1,15 @@
+name: todo_as
+services:
+  db:
+    image: mariadb:${TIM95BELL_TODO_AS_MARIADB_VERSION}
+    container_name: todo_as_db
+    build: .
+    ports:
+      - 3308:3306
+    expose:
+      - 3308
+    environment:
+      MARIADB_ROOT_PASSWORD: ${TIM95BELL_TODO_AS_DB_ROOT_PASSWORD}
+      MARIADB_PASSWORD: ${TIM95BELL_TODO_AS_DB_PASSWORD}
+      MARIADB_USER: admin
+      MARIADB_DATABASE: todo_as_db

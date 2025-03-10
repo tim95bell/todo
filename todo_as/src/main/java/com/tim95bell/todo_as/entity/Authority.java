@@ -1,9 +1,11 @@
-package com.tim95bell.todo_api.entity;
+package com.tim95bell.todo_as.entity;
+
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "authorities")
 public class Authority {
+
     public Authority() {}
 
     public Authority(User user, String authority) {
@@ -15,6 +17,7 @@ public class Authority {
 
     @Embeddable
     static class Data {
+
         public Data(User user, String authority) {
             this.user = user;
             this.authority = authority;
@@ -23,6 +26,7 @@ public class Authority {
         @ManyToOne(optional = false)
         @JoinColumn(name = "username")
         public User user;
+
         @Column(length = 50)
         public String authority;
     }

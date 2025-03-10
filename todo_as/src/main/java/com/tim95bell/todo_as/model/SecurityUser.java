@@ -1,12 +1,13 @@
-package com.tim95bell.todo_api.model;
+package com.tim95bell.todo_as.model;
 
-import com.tim95bell.todo_api.entity.User;
+import com.tim95bell.todo_as.entity.User;
+import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import java.util.Collection;
 
 public class SecurityUser implements UserDetails {
+
     private final User user;
 
     public SecurityUser(User user) {
@@ -15,7 +16,10 @@ public class SecurityUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.authorities.stream().map(x -> new SimpleGrantedAuthority(x.getAuthority())).toList();
+        return user.authorities
+            .stream()
+            .map(x -> new SimpleGrantedAuthority(x.getAuthority()))
+            .toList();
     }
 
     @Override

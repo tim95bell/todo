@@ -1,4 +1,4 @@
-package com.tim95bell.todo_api.entity;
+package com.tim95bell.todo_as.entity;
 
 import jakarta.persistence.*;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 public class User {
+
     public User() {}
 
     public User(String username, String password, boolean enabled) {
@@ -19,10 +20,16 @@ public class User {
     // TODO(TB): ignorecase?
     // TODO(TB): not empty?
     public String username;
+
     // TODO(TB): ignorecase?
     // TODO(TB): not empty?
     public String password;
     public boolean enabled;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "data.user", orphanRemoval = true)
+
+    @OneToMany(
+        cascade = CascadeType.ALL,
+        mappedBy = "data.user",
+        orphanRemoval = true
+    )
     public List<Authority> authorities;
 }

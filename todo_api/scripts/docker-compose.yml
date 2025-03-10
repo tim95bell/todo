@@ -2,7 +2,7 @@ name: todo_api
 services:
   db:
     image: mariadb:${TIM95BELL_TODO_API_MARIADB_VERSION}
-    container_name: db
+    container_name: todo_api_db
     build: .
     ports:
       - 3306:3306

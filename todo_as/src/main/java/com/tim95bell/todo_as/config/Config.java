@@ -12,7 +12,6 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
 import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,9 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
@@ -35,10 +33,12 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class Config {
@@ -46,6 +46,7 @@ public class Config {
     private final String WEB_CLIENT_ID;
     private final String WEB_CLIENT_SECRET;
     private final String WEB_REDIRECT_URI;
+    private final String ADMIN_PASSWORD;
 
     public Config(
         @Value(
@@ -56,11 +57,15 @@ public class Config {
         ) String webClientSecret,
         @Value(
             "#{environment.TIM95BELL_TODO_AS_WEB_REDIRECT_URI}"
-        ) String webRedirectUri
+        ) String webRedirectUri,
+        @Value(
+            "#{environment.TIM95BELL_TODO_AS_ADMIN_USER_PASSWORD}"
+        ) String adminPassword
     ) {
         this.WEB_CLIENT_ID = webClientId;
         this.WEB_CLIENT_SECRET = webClientSecret;
         this.WEB_REDIRECT_URI = webRedirectUri;
+        this.ADMIN_PASSWORD = adminPassword;
     }
 
     @Bean
@@ -106,17 +111,21 @@ public class Config {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User.withUsername("tim")
-            .password("password")
-            .roles("USER")
-            .build();
-        return new InMemoryUserDetailsManager(userDetails);
+    public UserDetailsService userDetailsService(DataSource dataSource) {
+        var m = new JdbcUserDetailsManager(dataSource);
+        m.createUser(
+            User.withUsername("admin")
+                .passwordEncoder(passwordEncoder()::encode)
+                .password(ADMIN_PASSWORD)
+                .roles("admin")
+                .build()
+        );
+        return m;
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -125,7 +134,8 @@ public class Config {
             UUID.randomUUID().toString()
         )
             .clientId(WEB_CLIENT_ID)
-            .clientSecret(WEB_CLIENT_SECRET)
+                // NOTE(TB): client secret is getting encoded with password encoder, so need to encode it here so it matches
+            .clientSecret(passwordEncoder().encode(WEB_CLIENT_SECRET))
             .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
             .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
             .clientAuthenticationMethod(
