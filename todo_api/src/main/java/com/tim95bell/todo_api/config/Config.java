@@ -17,15 +17,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class Config {
 
+    @Value("${key_set_uri}")
+    private String keySetUri;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
         throws Exception {
-        return http
-            .csrf(CsrfConfigurer<HttpSecurity>::disable)
-            .authorizeHttpRequests(c -> {
-                c.anyRequest().authenticated();
-            })
-            .httpBasic(Customizer.withDefaults())
-            .build();
+        http.oauth2ResourceServer(c -> c.jwt(j -> j.jwkSetUri(keySetUri)));
+        http.authorizeHttpRequests(c -> c.anyRequest().authenticated());
+        return http.build();
     }
 }

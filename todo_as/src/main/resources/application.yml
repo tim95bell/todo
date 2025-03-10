@@ -19,10 +19,11 @@ spring:
 
 server:
   port: ${TIM95BELL_TODO_AS_PORT}
-  ssl:
-    key-store: classpath:local/certificate.p12
-    key-store-type: PKCS12
-    key-store-password: ${TIM95BELL_TODO_AS_SSL_CERTIFICATE_PASSWORD}
+  # NOTE(TB): had to disable self signed ssl in dev build as other server does not trust it
+  # ssl:
+  #   key-store: classpath:local/certificate.p12
+  #   key-store-type: PKCS12
+  #   key-store-password: ${TIM95BELL_TODO_AS_SSL_CERTIFICATE_PASSWORD}
 
 logging:
   level:
