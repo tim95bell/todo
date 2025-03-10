@@ -1,0 +1,12 @@
+spring:
+  config:
+    import: classpath:local/local.env[.properties]
+  application:
+    name: todo_as
+server:
+  port: ${TIM95BELL_TODO_AS_PORT}
+
+logging:
+  level:
+    org.springframework.security: trace
+
