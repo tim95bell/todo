@@ -1,4 +1,4 @@
-package com.tim95bell.todo.entity;
+package com.tim95bell.todo_api.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;

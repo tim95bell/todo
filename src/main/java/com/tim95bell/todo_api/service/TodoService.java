@@ -1,6 +1,6 @@
-package com.tim95bell.todo.service;
+package com.tim95bell.todo_api.service;
 
-import com.tim95bell.todo.entity.Todo;
+import com.tim95bell.todo_api.entity.Todo;
 
 import java.util.Optional;
 import java.util.stream.Stream;

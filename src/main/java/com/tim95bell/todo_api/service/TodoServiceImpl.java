@@ -1,7 +1,7 @@
-package com.tim95bell.todo.service;
+package com.tim95bell.todo_api.service;
 
-import com.tim95bell.todo.entity.Todo;
-import com.tim95bell.todo.repo.TodoRepo;
+import com.tim95bell.todo_api.entity.Todo;
+import com.tim95bell.todo_api.repo.TodoRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

@@ -1,7 +1,7 @@
-package com.tim95bell.todo;
+package com.tim95bell.todo_api;
 
-import com.tim95bell.todo.entity.Todo;
-import com.tim95bell.todo.service.TodoService;
+import com.tim95bell.todo_api.entity.Todo;
+import com.tim95bell.todo_api.service.TodoService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;

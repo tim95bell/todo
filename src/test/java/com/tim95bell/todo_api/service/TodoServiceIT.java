@@ -1,8 +1,8 @@
-package com.tim95bell.todo.service;
+package com.tim95bell.todo_api.service;
 
-import com.tim95bell.todo.TestcontainersConfiguration;
-import com.tim95bell.todo.TodoApplication;
-import com.tim95bell.todo.entity.Todo;
+import com.tim95bell.todo_api.TestcontainersConfiguration;
+import com.tim95bell.todo_api.TodoApplication;
+import com.tim95bell.todo_api.entity.Todo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

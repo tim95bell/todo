@@ -1,7 +1,7 @@
-package com.tim95bell.todo.controller;
+package com.tim95bell.todo_api.controller;
 
-import com.tim95bell.todo.entity.Todo;
-import com.tim95bell.todo.service.TodoService;
+import com.tim95bell.todo_api.entity.Todo;
+import com.tim95bell.todo_api.service.TodoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

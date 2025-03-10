@@ -1,4 +1,4 @@
-package com.tim95bell.todo;
+package com.tim95bell.todo_api;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -13,7 +13,7 @@ public class TestcontainersConfiguration {
 
     TestcontainersConfiguration(
         @Value(
-            "#{environment.TIM95BELL_TODO_MARIADB_VERSION}"
+            "#{environment.TIM95BELL_TODO_API_MARIADB_VERSION}"
         ) String mariaDbVersion
     ) {
         this.mariaDbImageName = "mariadb:" + mariaDbVersion;

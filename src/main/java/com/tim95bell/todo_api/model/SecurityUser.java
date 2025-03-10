@@ -1,6 +1,6 @@
-package com.tim95bell.todo.model;
+package com.tim95bell.todo_api.model;
 
-import com.tim95bell.todo.entity.User;
+import com.tim95bell.todo_api.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

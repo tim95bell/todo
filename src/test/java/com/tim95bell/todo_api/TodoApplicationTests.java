@@ -1,4 +1,4 @@
-package com.tim95bell.todo;
+package com.tim95bell.todo_api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

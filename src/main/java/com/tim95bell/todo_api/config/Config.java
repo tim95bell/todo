@@ -1,4 +1,4 @@
-package com.tim95bell.todo.config;
+package com.tim95bell.todo_api.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +19,7 @@ import javax.sql.DataSource;
 public class Config {
     private final String adminPassword;
 
-    public Config(@Value("#{environment.TIM95BELL_TODO_ADMIN_USER_PASSWORD}") String adminPassword) {
+    public Config(@Value("#{environment.TIM95BELL_TODO_API_ADMIN_USER_PASSWORD}") String adminPassword) {
         this.adminPassword = adminPassword;
     }
 
