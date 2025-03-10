@@ -11,7 +11,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
+import java.util.List;
 import java.util.UUID;
+import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,8 +39,8 @@ import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
-
-import javax.sql.DataSource;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 public class Config {
@@ -47,6 +49,7 @@ public class Config {
     private final String WEB_CLIENT_SECRET;
     private final String WEB_REDIRECT_URI;
     private final String ADMIN_PASSWORD;
+    private final String WEB_URL;
 
     public Config(
         @Value(
@@ -60,12 +63,16 @@ public class Config {
         ) String webRedirectUri,
         @Value(
             "#{environment.TIM95BELL_TODO_AS_ADMIN_USER_PASSWORD}"
-        ) String adminPassword
+        ) String adminPassword,
+        @Value(
+                "#{environment.TIM95BELL_TODO_WEB_URL}"
+        ) String webUrl
     ) {
         this.WEB_CLIENT_ID = webClientId;
         this.WEB_CLIENT_SECRET = webClientSecret;
         this.WEB_REDIRECT_URI = webRedirectUri;
         this.ADMIN_PASSWORD = adminPassword;
+        this.WEB_URL = webUrl;
     }
 
     @Bean
@@ -74,6 +81,19 @@ public class Config {
         throws Exception {
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
             OAuth2AuthorizationServerConfigurer.authorizationServer();
+
+        http.cors(cors -> {
+            CorsConfigurationSource source = request -> {
+                CorsConfiguration config = new CorsConfiguration();
+                config.setAllowedOrigins(
+                        List.of(WEB_URL));
+                config.setAllowedMethods(
+                        List.of("OPTIONS", "GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"));
+                config.setAllowedHeaders(List.of("*"));
+                return config;
+            };
+            cors.configurationSource(source);
+        });
 
         http
             .securityMatcher(
@@ -99,8 +119,18 @@ public class Config {
     @Order(2)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
         throws Exception {
-        http.csrf(csrf -> csrf.disable());
-        http.cors(cors -> cors.disable());
+        http.cors(cors -> {
+            CorsConfigurationSource source = request -> {
+                CorsConfiguration config = new CorsConfiguration();
+                config.setAllowedOrigins(
+                        List.of(WEB_URL));
+                config.setAllowedMethods(
+                        List.of("OPTIONS", "GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"));
+                config.setAllowedHeaders(List.of("*"));
+                return config;
+            };
+            cors.configurationSource(source);
+        });
         http
             .formLogin(Customizer.withDefaults())
             .authorizeHttpRequests(authorize ->
@@ -134,7 +164,7 @@ public class Config {
             UUID.randomUUID().toString()
         )
             .clientId(WEB_CLIENT_ID)
-                // NOTE(TB): client secret is getting encoded with password encoder, so need to encode it here so it matches
+            // NOTE(TB): client secret is getting encoded with password encoder, so need to encode it here so it matches
             .clientSecret(passwordEncoder().encode(WEB_CLIENT_SECRET))
             .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
             .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
