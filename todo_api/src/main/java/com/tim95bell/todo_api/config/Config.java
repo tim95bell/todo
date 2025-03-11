@@ -13,17 +13,46 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 public class Config {
+    private final String KEY_SET_URI;
+    private final String WEB_URL;
 
-    @Value("${key_set_uri}")
-    private String keySetUri;
+    Config(@Value("${key_set_uri}") String keySetUri, @Value("#{environment.TIM95BELL_TODO_WEB_URL}") String webUrl) {
+        this.KEY_SET_URI = keySetUri;
+        this.WEB_URL = webUrl;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
         throws Exception {
-        http.oauth2ResourceServer(c -> c.jwt(j -> j.jwkSetUri(keySetUri)));
+        http.cors(cors -> {
+            CorsConfigurationSource source = request -> {
+                CorsConfiguration config = new CorsConfiguration();
+                config.setAllowedOrigins(List.of(WEB_URL));
+                config.setAllowedMethods(
+                        List.of(
+                                "OPTIONS",
+                                "GET",
+                                "POST",
+                                "PUT",
+                                "DELETE",
+                                "PATCH",
+                                "HEAD"
+                        )
+                );
+                config.setAllowedHeaders(List.of("*"));
+                return config;
+            };
+            cors.configurationSource(source);
+        });
+
+        http.oauth2ResourceServer(c -> c.jwt(j -> j.jwkSetUri(KEY_SET_URI)));
         http.authorizeHttpRequests(c -> c.anyRequest().authenticated());
         return http.build();
     }
