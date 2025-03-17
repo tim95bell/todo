@@ -1,13 +1,19 @@
 
 import { useEffect, useContext, createContext } from "react";
 
-export type Auth = {
+export type Tokens = {
     access_token: string;
     refresh_token: string;
     scope: string;
     id_token: string;
     token_type: string;
-    expires_in: string;
+    expires_in: number;
+};
+
+export type Auth = {
+    access_token: string;
+    refresh_token: string;
+    expires_at: number;
 };
 
 const codeChallengeCharacters = (() => {

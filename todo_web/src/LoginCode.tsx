@@ -1,6 +1,6 @@
 
 import { useContext, useEffect } from "react";
-import { useAssertNotAuthorized, SetAuthContext, Auth } from "./auth";
+import { useAssertNotAuthorized, SetAuthContext } from "./auth";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 const useCode = () => {
@@ -23,6 +23,7 @@ export default () => {
                 navigate("/login");
                 return;
             }
+            const now = Date.now();
             fetch(url, {
                 signal: controller.signal,
                 method: "POST",
@@ -41,7 +42,21 @@ export default () => {
                 .then((body) => {
                     // TODO(TB): check shape of body
                     window.localStorage.removeItem("codeChallengeVerifier");
-                    setAuth(body as Auth);
+                    if (body
+                        && typeof body.access_token === "string"
+                        && typeof body.refresh_token === "string"
+                        && typeof body.scope === "string"
+                        && typeof body.id_token === "string"
+                        && typeof body.expires_in === "number"
+                    ) {
+                        setAuth({
+                            access_token: body.access_token,
+                            refresh_token: body.refresh_token,
+                            expires_at: now + body.expires_in,
+                        });
+                    } else {
+                        return Promise.reject("Invalid response body");
+                    }
                 })
                 .catch((err) => {
                     if (err !== "dismount") {
