@@ -1,17 +1,10 @@
+
 package com.tim95bell.todo_api.config;
 
-import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -23,14 +16,20 @@ public class Config {
     private final String KEY_SET_URI;
     private final String WEB_URL;
 
-    Config(@Value("${key_set_uri}") String keySetUri, @Value("#{environment.TIM95BELL_TODO_WEB_URL}") String webUrl) {
+    private final JwtAuthenticationConverter converter;
+
+    Config(@Value("${key_set_uri}") String keySetUri,
+           @Value("#{environment.TIM95BELL_TODO_WEB_URL}") String webUrl,
+           JwtAuthenticationConverter converter
+    ) {
         this.KEY_SET_URI = keySetUri;
         this.WEB_URL = webUrl;
+        this.converter = converter;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
-        throws Exception {
+            throws Exception {
         http.cors(cors -> {
             CorsConfigurationSource source = request -> {
                 CorsConfiguration config = new CorsConfiguration();
@@ -52,8 +51,18 @@ public class Config {
             cors.configurationSource(source);
         });
 
-        http.oauth2ResourceServer(c -> c.jwt(j -> j.jwkSetUri(KEY_SET_URI)));
-        http.authorizeHttpRequests(c -> c.anyRequest().authenticated());
+        http.authorizeHttpRequests(c -> {
+            c.requestMatchers("/api/admin/*").hasRole("admin");
+            c.anyRequest().hasRole("user");
+        });
+
+        http.oauth2ResourceServer(c -> {
+            c.jwt(j -> {
+                j.jwkSetUri(KEY_SET_URI)
+                        .jwtAuthenticationConverter(converter);
+            });
+        });
+
         return http.build();
     }
 }

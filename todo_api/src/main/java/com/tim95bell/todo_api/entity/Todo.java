@@ -1,3 +1,4 @@
+
 package com.tim95bell.todo_api.entity;
 
 import jakarta.persistence.*;
@@ -14,21 +15,25 @@ import java.time.LocalDateTime;
 public class Todo {
     public Todo() {}
 
-    public Todo(String text, boolean complete) {
-        this.text = text;
+    public Todo(String text, boolean complete, String username) {
         this.id = null;
+        this.username = username;
+        this.text = text;
         this.complete = complete;
     }
 
-    public Todo(String text) {
-        this.text = text;
+    public Todo(String text, String username) {
         this.id = null;
+        this.username = username;
+        this.text = text;
         this.complete = false;
     }
 
     @Id
     @GeneratedValue
     public Long id;
+    @Column(updatable = false)
+    public String username;
     @NotEmpty
     public String text;
     public boolean complete;
